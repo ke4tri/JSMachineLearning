@@ -1,49 +1,61 @@
 let mobilenet;
-//let puffin;
+let classifier;
 let video;
 let label = '';
+let happyButton;
+let sadButton;
+let trainButton;
 
 function modelReady() {
   console.log("Model is ready!!!");
- // mobilenet.predict(puffin, gotResults);
- mobilenet.predict(gotResults);
+ //mobilenet.predict(gotResults);
 }
 
-function gotResults(error, results) {
+function videoReady() {
+  console.log("Video is ready!!!");
+}
+
+function gotResults(error, result) {
   if(error){
     console.error(error);
   }else {
-    console.log(results);
-    label = results[0].className;
-    // let prob = results[0].probability;
-    // fill(0);
-    // textSize(64);
-    // text(label, 10, height - 100);
-    // createP(label);
-    // createP(prob);
-   // mobilenet.predict(gotResults);
+    label = result;
+    classifier.classify(gotResults);
   }
 }
 
-//This would draw the image inside of the canvas if we were using a static image andnot
-//VIDEO
-// function imageReady() {
-//   image(puffin, 0, 0, width, height);
-// }
+function whileTraining(loss){
+  if (loss == null) {
+    console.log('Training Complete!');
+    classifier.classify(gotResults);
+  }else {
+    console.log(loss);
+  }
+}
 
 function setup() {
   createCanvas(640, 550);
   //Instead of using createImg (for just image), switch to createCapture
-  //puffin = createImg('images/puffin.jpg', imageReady);
   video = createCapture(VIDEO);
   video.hide();
- // puffin.hide();
   background(0);
-  //Adding the param video will allow the pridictor to use all the video 
-  //And not just a single image
- // mobilenet = ml5.imageClassifier('MobileNet', modelReady);
-  mobilenet = ml5.imageClassifier('MobileNet', video, modelReady);
+  mobilenet = ml5.featureExtractor('MobileNet',  modelReady);
+  classifier = mobilenet.classification(video, videoReady);
 
+  happyButton = createButton('happy');
+  happyButton.mousePressed(function(){
+    classifier.addImage('happy');
+  });
+
+  sadButton = createButton('sad');
+  sadButton.mousePressed(function(){
+    classifier.addImage('sad');
+  });
+
+  trainButton = createButton('train');
+  trainButton.mousePressed(function(){
+    classifier.train(whileTraining);
+  });
 }
 
 function draw() {
