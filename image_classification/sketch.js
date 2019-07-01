@@ -5,6 +5,7 @@ let video;
 function modelReady() {
   console.log("Model is ready!!!");
  // mobilenet.predict(puffin, gotResults);
+ mobilenet.predict(gotResults);
 }
 
 function gotResults(error, results) {
@@ -36,7 +37,11 @@ function setup() {
   video.hide();
  // puffin.hide();
   background(0);
-  mobilenet = ml5.imageClassifier('MobileNet', modelReady);
+  //Adding the param video will allow the pridictor to use all the video 
+  //And not just a single image
+ // mobilenet = ml5.imageClassifier('MobileNet', modelReady);
+  mobilenet = ml5.imageClassifier('MobileNet', video, modelReady);
+
 }
 
 function draw() {
