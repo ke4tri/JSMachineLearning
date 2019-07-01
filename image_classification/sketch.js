@@ -1,7 +1,17 @@
 let mobilenet;
+// let puffin;
 
 function modelReady() {
   console.log("Model is ready!!!");
+  mobilenet.predict(puffin, gotResults);
+}
+
+function gotResults(error, results) {
+  if(error){
+    console.error(error);
+  }else {
+    console.log(results);
+  }
 }
 
 function imageReady() {
